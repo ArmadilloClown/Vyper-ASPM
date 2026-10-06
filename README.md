@@ -57,13 +57,13 @@ Os dois comandos devem retornar as respectivas versões instaladas.
 Clone o repositório:
 
 ```powershell
-git clone <URL_DO_REPOSITORIO>
+git clone git clone https://github.com/ArmadilloClown/Vyper-ASPM.git
 ```
 
 Entre na pasta:
 
 ```powershell
-cd vyper-discovery
+cd Vyper-ASPM
 ```
 
 Caso tenha recebido o projeto como `.zip`, extraia o arquivo e entre na pasta principal do projeto.
