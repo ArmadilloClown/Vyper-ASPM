@@ -17,7 +17,7 @@ O desenvolvimento da Vyper ASPM foi realizado em grupo pelos seguintes integrant
 | Pedro | [@PedroHerani](https://github.com/ArmadilloClown) |
 | Nycollas | [@Nycollaschagas](https://github.com/Nycollaschagas) |
 | Enrico | [@Enrico525](https://github.com/Enrico525) |
-| Victor | [@] |
+| Victor | [@Victor3006](https://github.com/vmlg3006) |
 
 Todos os integrantes possuem acesso ao repositório e participaram do desenvolvimento do projeto.
 
