@@ -8,6 +8,20 @@ A plataforma integra análise de código, dependências, segredos, containers e 
 
 ---
 
+## 👥 Equipe do projeto
+
+O desenvolvimento da Vyper ASPM foi realizado em grupo pelos seguintes integrantes:
+
+| Nome | GitHub |
+|---|---|
+| Pedro | [@ArmadilloClown](https://github.com/ArmadilloClown) |
+| Nycollas | [@Nycollaschagas](https://github.com/Nycollaschagas) |
+| Enrico | [@] |
+| Victor | [@] |
+
+Todos os integrantes possuem acesso ao repositório e participaram do desenvolvimento do projeto.
+
+
 # ⚡ Início rápido
 
 A forma recomendada de executar a Vyper é utilizando Docker.
