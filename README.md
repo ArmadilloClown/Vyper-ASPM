@@ -2,17 +2,17 @@
 
 **Application Security Posture Management**
 
-A **Vyper ASPM** é uma plataforma para centralizar informações de segurança de aplicações, correlacionar vulnerabilidades e riscos e apresentar uma visão consolidada da postura de segurança.
+A Vyper ASPM é uma plataforma para centralizar informações de segurança de aplicações, correlacionar vulnerabilidades e riscos e apresentar uma visão consolidada da postura de segurança.
 
-A plataforma integra análise de código, dependências, segredos, containers e aplicações web em um único ambiente, permitindo acompanhar **Findings, Risks, Assets, Security Score, histórico de scans, comparação entre análises e recomendações de segurança assistidas por IA**.
+A plataforma integra análise de código, dependências, segredos, containers e aplicações web em um único ambiente, permitindo acompanhar Findings, Risks, Assets, Security Score, histórico de scans, comparação entre análises e recomendações de segurança assistidas por IA.
 
 ---
 
-## ⚡ Início rápido
+# ⚡ Início rápido
 
-A forma recomendada de executar a Vyper é utilizando **Docker**.
+A forma recomendada de executar a Vyper é utilizando Docker.
 
-### Requisitos
+## Requisitos
 
 - Docker Desktop no Windows ou Docker Engine + Docker Compose no Linux
 - Git, caso o projeto seja obtido através de um repositório Git
@@ -39,7 +39,7 @@ Esses componentes são executados no ambiente Docker.
 
 ## 1. Instalar o Docker Desktop
 
-Instale o **Docker Desktop para Windows** e confirme que ele está funcionando.
+Instale o Docker Desktop para Windows e confirme que ele está funcionando.
 
 Depois, abra o PowerShell e verifique:
 
@@ -50,14 +50,12 @@ docker compose version
 
 Os dois comandos devem retornar as respectivas versões instaladas.
 
----
-
 ## 2. Obter o projeto
 
 Clone o repositório:
 
 ```powershell
-git clone git clone https://github.com/ArmadilloClown/Vyper-ASPM.git
+git clone https://github.com/ArmadilloClown/Vyper-ASPM.git
 ```
 
 Entre na pasta:
@@ -67,8 +65,6 @@ cd Vyper-ASPM
 ```
 
 Caso tenha recebido o projeto como `.zip`, extraia o arquivo e entre na pasta principal do projeto.
-
----
 
 ## 3. Criar o `.env`
 
@@ -80,13 +76,11 @@ Copy-Item .env.example .env
 
 Edite o arquivo `.env` conforme necessário.
 
-> **Importante:** nunca publique o `.env` contendo credenciais, tokens ou outras informações sensíveis.
-
----
+**Importante:** nunca publique o `.env` contendo credenciais, tokens ou outras informações sensíveis.
 
 ## 4. Configurar a IA
 
-A Vyper utiliza **Ollama** como serviço de inteligência artificial.
+A Vyper utiliza Ollama como serviço de inteligência artificial.
 
 Instale o Ollama no Windows e instale o modelo configurado:
 
@@ -112,8 +106,6 @@ AI_TEMPERATURE=0.2
 ```
 
 O Ollama deve estar em execução antes de utilizar as funcionalidades de IA.
-
----
 
 ## 5. Construir e iniciar a Vyper
 
@@ -145,8 +137,6 @@ A Vyper pode ser executada em distribuições Linux utilizando Docker.
 
 Os exemplos abaixo consideram Ubuntu/Debian.
 
----
-
 ## 1. Instalar Docker
 
 Atualize os pacotes:
@@ -174,30 +164,26 @@ docker --version
 docker compose version
 ```
 
----
-
 ## 2. Obter o projeto
 
 Clone o repositório:
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/ArmadilloClown/Vyper-ASPM.git
 ```
 
 Entre na pasta:
 
 ```bash
-cd vyper-discovery
+cd Vyper-ASPM
 ```
 
 Caso tenha recebido o projeto como `.zip`:
 
 ```bash
-unzip vyper-discovery.zip
-cd vyper-discovery
+unzip Vyper-ASPM.zip
+cd Vyper-ASPM
 ```
-
----
 
 ## 3. Criar o `.env`
 
@@ -218,8 +204,6 @@ ou:
 ```bash
 vim .env
 ```
-
----
 
 ## 4. Configurar o Ollama
 
@@ -256,7 +240,7 @@ Como o Docker precisa acessar o Ollama executado no host, o serviço deve aceita
 
 Configure o Ollama para escutar na interface necessária ao Docker.
 
-Em instalações utilizando systemd, pode ser necessário configurar:
+Em instalações utilizando `systemd`, pode ser necessário configurar:
 
 ```ini
 [Service]
@@ -275,8 +259,6 @@ Verifique:
 ```bash
 sudo systemctl status ollama
 ```
-
----
 
 ## 5. Construir e iniciar
 
@@ -318,8 +300,6 @@ O arquivo disponibilizado no projeto é:
 
 O `.env.example` deve conter apenas valores de exemplo ou placeholders.
 
----
-
 ## Principais variáveis
 
 ```env
@@ -344,7 +324,7 @@ GITLEAKS_BIN=
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
-### Comunicação entre containers
+## Comunicação entre containers
 
 Quando executada através do Docker Compose, a Vyper utiliza os nomes dos serviços para comunicação interna:
 
@@ -416,7 +396,7 @@ No Linux:
 sudo docker compose down
 ```
 
-> **Não utilize `docker compose down -v` se quiser preservar os dados persistidos do PostgreSQL.**
+**Não utilize `docker compose down -v` se quiser preservar os dados persistidos do PostgreSQL.**
 
 ---
 
@@ -495,13 +475,13 @@ Após a análise, o diretório temporário é removido.
 
 ---
 
-## ⚠️ Aviso de segurança
+# ⚠️ Aviso de segurança
 
-> **ATENÇÃO:** os scans da Vyper executam ferramentas de segurança sobre o repositório e/ou aplicação informados.
+**ATENÇÃO:** os scans da Vyper executam ferramentas de segurança sobre o repositório e/ou aplicação informados.
 
-> Execute scans somente em aplicações, repositórios e ambientes que você possui ou para os quais possui autorização explícita para realizar testes de segurança.
+Execute scans somente em aplicações, repositórios e ambientes que você possui ou para os quais possui autorização explícita para realizar testes de segurança.
 
-> Para análises DAST utilizando **OWASP ZAP**, recomenda-se utilizar ambientes de teste, homologação ou outros ambientes especificamente autorizados. Evite executar scans ativos diretamente contra ambientes de produção sem autorização e avaliação prévia dos possíveis impactos.
+Para análises DAST utilizando OWASP ZAP, recomenda-se utilizar ambientes de teste, homologação ou outros ambientes especificamente autorizados. Evite executar scans ativos diretamente contra ambientes de produção sem autorização e avaliação prévia dos possíveis impactos.
 
 Os repositórios atualmente suportados devem utilizar HTTPS e pertencer aos hosts permitidos pela aplicação:
 
@@ -528,8 +508,6 @@ O Dashboard apresenta uma visão geral da postura de segurança:
 - principais pacotes vulneráveis
 - histórico de análises
 - superfície de ataque
-
----
 
 ## Findings
 
@@ -564,8 +542,6 @@ Um finding pode conter:
 | `active` | Vulnerabilidade encontrada também em análise anterior |
 | `fixed` | Vulnerabilidade encontrada anteriormente que não apareceu na análise atual |
 
----
-
 ## Risks
 
 A Vyper correlaciona findings para produzir uma visão orientada a riscos.
@@ -579,8 +555,6 @@ A área de Risks apresenta:
 - informações de risco
 - análise assistida por IA
 - recomendações de remediação
-
----
 
 ## Security Score
 
@@ -598,8 +572,6 @@ Findings corrigidos não participam do cálculo atual.
 
 O resultado é limitado ao intervalo de `0` a `100`.
 
----
-
 ## Assets / Attack Surface
 
 A Vyper identifica ativos relacionados às aplicações analisadas.
@@ -616,19 +588,19 @@ Essas informações permitem visualizar a superfície de ataque identificada dur
 
 # 🛡️ Ferramentas de segurança
 
-### Semgrep
+## Semgrep
 
 Análise estática de código (**SAST**).
 
-### Trivy
+## Trivy
 
 Identificação de vulnerabilidades relacionadas a dependências, sistemas de arquivos e containers.
 
-### Gitleaks
+## Gitleaks
 
 Identificação de possíveis segredos expostos no código.
 
-### OWASP ZAP
+## OWASP ZAP
 
 Análise dinâmica de aplicações web (**DAST**).
 
@@ -636,7 +608,7 @@ Análise dinâmica de aplicações web (**DAST**).
 
 # 🤖 Inteligência Artificial
 
-A Vyper utiliza **Ollama** para auxiliar na análise de riscos.
+A Vyper utiliza Ollama para auxiliar na análise de riscos.
 
 A IA pode produzir:
 
@@ -697,7 +669,7 @@ Scan atual
 
 # ⚡ Execução assíncrona
 
-Os scans são executados utilizando **Celery**.
+Os scans são executados utilizando Celery.
 
 Isso permite que análises demoradas continuem sendo executadas no backend sem depender da permanência do navegador aberto.
 
@@ -756,7 +728,7 @@ A Vyper permite configurar análises automáticas.
 
 O intervalo mínimo configurado atualmente é de **10 minutos**.
 
-O agendamento é controlado pelo **Celery Beat**, portanto o navegador não precisa permanecer aberto.
+O agendamento é controlado pelo Celery Beat, portanto o navegador não precisa permanecer aberto.
 
 O próximo scan é calculado a partir da conclusão da análise anterior.
 
@@ -830,7 +802,7 @@ Isso permite executar a Vyper sem instalar manualmente Python, Node.js, PostgreS
 # 📁 Estrutura do projeto
 
 ```text
-Vyper/
+Vyper-ASPM/
 │
 ├── app/
 │   ├── database/
@@ -853,6 +825,7 @@ Vyper/
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
+├── LICENSE.md
 └── README.md
 ```
 
@@ -893,6 +866,7 @@ Máquina A
 ├── Vyper
 ├── PostgreSQL A
 └── Redis A
+
 
 Máquina B
 ├── Vyper
@@ -976,7 +950,7 @@ Possíveis evoluções futuras incluem:
 
 # 📌 Status
 
-A Vyper possui uma implementação funcional de um **MVP de Application Security Posture Management**, incluindo:
+A Vyper possui uma implementação funcional de um MVP de Application Security Posture Management, incluindo:
 
 - coleta de vulnerabilidades
 - centralização de findings
@@ -1002,3 +976,11 @@ A plataforma está estruturada para execução através de Docker e preparada pa
 Application Security Posture Management
 
 Desenvolvido como projeto acadêmico e técnico para estudo e aplicação prática de conceitos de segurança de aplicações, integração de ferramentas DevSecOps, processamento assíncrono e análise de riscos.
+
+---
+
+## 📄 Licença
+
+Este projeto é distribuído sob os termos da **GNU General Public License v3.0 (GPLv3)**.
+
+Consulte o arquivo `LICENSE.md` para obter o texto completo da licença.
