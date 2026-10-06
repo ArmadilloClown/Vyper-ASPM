@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Vyper · Identidade Visual v1.0
+   Fontes: VT323 (título) · Orbitron (subtítulo) · Oxanium (corpo)
+   ========================================================================== */
+
+@theme inline {
+    --font-title: var(--font-vt323), ui-monospace, monospace;
+    --font-display: var(--font-orbitron), ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-oxanium), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+    /* Marca */
+    --color-vyper-cyan: #00b9ca;
+    --color-vyper-night: #001017;
+    --color-vyper-green: #26e238;
+    --color-vyper-base: #121521;
+    --color-vyper-surface: #1a1f31;
+    --color-vyper-line: #0f3a46;
+
+    /* Ciano = cor de marca, links e destaques */
+    --color-cyan-300: #4fd6e4;
+    --color-cyan-400: #00b9ca;
+    --color-cyan-500: #00b9ca;
+
+    /* Status de severidade (usar só para severidade) */
+    --color-red-300: #ff8a96;
+    --color-red-400: #ff4d5e;
+    --color-red-500: #ff4d5e;
+    --color-orange-400: #ff9f43;
+    --color-orange-500: #ff9f43;
+    --color-yellow-400: #f5d142;
+    --color-yellow-500: #f5d142;
+    --color-amber-400: #f5d142;
+    --color-amber-500: #f5d142;
+
+    /* Resolvido / sucesso */
+    --color-green-400: #26e238;
+    --color-green-500: #26e238;
+    --color-emerald-400: #26e238;
+    --color-emerald-500: #26e238;
+
+    /* Neutros com leve tom frio */
+    --color-slate-200: #dde3ee;
+    --color-slate-300: #c3cbda;
+    --color-slate-400: #9aa4b8;
+    --color-slate-500: #8390a6;
+    --color-slate-600: #5d687e;
+    --color-gray-400: #9aa4b8;
+    --color-gray-500: #8390a6;
+}
+
+:root {
+    --background: #121521;
+    --surface: #1a1f31;
+    --border: #0f3a46;
+    --primary: #00b9ca;
+    --success: #26e238;
+    --danger: #ff4d5e;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        background: var(--background);
+        color-scheme: dark;
+    }
+
+    body {
+        min-height: 100vh;
+        background: var(--background);
+        color: #ffffff;
+        font-family: var(--font-sans);
+        /* Oxanium abaixo de 16px sobe para Light (300) */
+        font-weight: 300;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    /* Título: VT323, sempre em caixa alta */
+    h1 {
+        font-family: var(--font-title);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-synthesis: none;
+    }
+
+    /* Subtítulo: Orbitron Regular */
+    h2,
+    h3,
+    h4 {
+        font-family: var(--font-display);
+        font-synthesis: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    ::selection {
+        background: rgba(0, 185, 202, 0.3);
+        color: #ffffff;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+}
+
+/* Fundo aurora: capas, heros e telas de login */
+.bg-aurora {
+    background-color: #001017;
+    background-image:
+        linear-gradient(to bottom, rgba(18, 21, 33, 0.35), #121521 100%),
+        url("/images/aurora.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+/* Números grandes em VT323 */
+.font-title {
+    font-family: var(--font-title);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-synthesis: none;
+}
+
+/* Scrollbar escura */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #0f3a46 transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

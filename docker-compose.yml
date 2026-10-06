@@ -1,0 +1,186 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: vyper-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vyper
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vyper"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  redis:
+    image: redis:8-alpine
+    container_name: vyper-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: vyper-zap
+    restart: unless-stopped
+    command:
+      - zap.sh
+      - -daemon
+      - -host
+      - 0.0.0.0
+      - -port
+      - "8080"
+      - -config
+      - api.addrs.addr.name=.*
+      - -config
+      - api.addrs.addr.regex=true
+      - -config
+      - api.disablekey=true
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  db-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vyper-db-init
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vyper
+      REDIS_URL: redis://redis:6379/0
+    command:
+      - python
+      - create_tables.py
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vyper-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vyper
+      REDIS_URL: redis://redis:6379/0
+
+      ZAP_URL: http://zap:8080
+
+      SEMGREP_BIN: /usr/local/bin/semgrep
+      TRIVY_BIN: /usr/local/bin/trivy
+      GITLEAKS_BIN: /usr/local/bin/gitleaks
+
+
+    # Linux: faz "host.docker.internal" apontar para a máquina host
+    # (é onde o Ollama roda). No Docker Desktop isso já existe.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./storage:/app/storage
+      - ./temp:/app/temp
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      zap:
+        condition: service_started
+
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vyper-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vyper
+      REDIS_URL: redis://redis:6379/0
+
+      ZAP_URL: http://zap:8080
+
+      SEMGREP_BIN: /usr/local/bin/semgrep
+      TRIVY_BIN: /usr/local/bin/trivy
+      GITLEAKS_BIN: /usr/local/bin/gitleaks
+
+    command:
+      - celery
+      - -A
+      - app.celery_app
+      - worker
+      - --loglevel=info
+      - --concurrency=1
+
+    volumes:
+      - ./storage:/app/storage
+      - ./temp:/app/temp
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      zap:
+        condition: service_started
+
+
+  frontend:
+    build:
+      context: ./vyper-dashboard
+      dockerfile: Dockerfile
+    container_name: vyper-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vyper-beat
+    command: celery -A app.celery_app.celery_app beat --loglevel=info
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vyper
+      REDIS_URL: redis://redis:6379/0
+      SEMGREP_BIN: /usr/local/bin/semgrep
+      TRIVY_BIN: /usr/local/bin/trivy
+      GITLEAKS_BIN: /usr/local/bin/gitleaks
+      ZAP_URL: http://zap:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+
+
+volumes:
+  postgres_data:
