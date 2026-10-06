@@ -282,31 +282,41 @@ sudo docker compose ps
 
 ---
 
-# ⚙️ Configuração
+## ⚙️ Configuração
 
 A Vyper utiliza variáveis de ambiente para configurar banco de dados, Redis, OWASP ZAP, IA, ferramentas de segurança e CORS.
 
-O arquivo utilizado localmente é:
+Para criar o arquivo local de configuração:
 
-```text
-.env
+```bash
+cp .env.example .env
 ```
 
-O arquivo disponibilizado no projeto é:
+No Windows PowerShell:
 
-```text
-.env.example
+```powershell
+Copy-Item .env.example .env
 ```
 
-O `.env.example` deve conter apenas valores de exemplo ou placeholders.
+### Execução com Docker
 
-## Principais variáveis
+Quando a Vyper é executada através do `docker compose`, os containers se comunicam através dos **nomes dos serviços Docker**, e não através de `localhost`.
+
+Os serviços utilizados internamente são:
+
+```text
+PostgreSQL → postgres:5432
+Redis      → redis:6379
+OWASP ZAP  → zap:8080
+```
+
+Portanto, as variáveis utilizadas pelos containers devem seguir este padrão:
 
 ```env
-DATABASE_URL=postgresql://postgres:CHANGE_ME@localhost:5432/vyper
-REDIS_URL=redis://localhost:6379/1
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/vyper
+REDIS_URL=redis://redis:6379/0
 
-ZAP_URL=http://127.0.0.1:8080
+ZAP_URL=http://zap:8080
 ZAP_API_KEY=
 ZAP_VERIFY_SSL=true
 ZAP_TIMEOUT=30
@@ -324,25 +334,86 @@ GITLEAKS_BIN=
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
-## Comunicação entre containers
-
-Quando executada através do Docker Compose, a Vyper utiliza os nomes dos serviços para comunicação interna:
+A comunicação interna fica organizada desta forma:
 
 ```text
-PostgreSQL → postgres:5432
-Redis      → redis:6379
-OWASP ZAP  → zap:8080
+Frontend
+   │
+   ▼
+Backend
+   │
+   ├── PostgreSQL → postgres:5432
+   ├── Redis      → redis:6379
+   ├── ZAP        → zap:8080
+   └── Ollama     → host.docker.internal:11434
 ```
 
-O `docker-compose.yml` fornece as configurações necessárias para a comunicação entre os containers.
+### Por que não utilizar `localhost`?
 
-A IA utiliza:
+Dentro de um container Docker, `localhost` aponta para o **próprio container**.
+
+Por exemplo:
 
 ```text
-host.docker.internal:11434
+Backend container
+      │
+      └── localhost:5432
+              │
+              └── procura PostgreSQL dentro do próprio container
 ```
 
-para acessar o Ollama executado na máquina hospedeira.
+Isso não corresponde à arquitetura da Vyper.
+
+O PostgreSQL está em outro container, chamado `postgres`. Portanto:
+
+```text
+Backend
+   │
+   └── postgres:5432
+          │
+          └── PostgreSQL
+```
+
+O mesmo princípio é utilizado para Redis e OWASP ZAP:
+
+```text
+redis:6379
+zap:8080
+```
+
+### Ollama
+
+O Ollama possui um comportamento diferente porque, na configuração atual, ele é executado no **host**, enquanto o Backend/Worker executa dentro do Docker.
+
+Por isso, o container utiliza:
+
+```env
+OLLAMA_URL=http://host.docker.internal:11434/api/generate
+```
+
+O `host.docker.internal` permite que o container acesse o serviço Ollama executado na máquina hospedeira.
+
+### Variáveis do `.env`
+
+As principais variáveis utilizadas pela aplicação são:
+
+| Variável | Valor no Docker | Finalidade |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://postgres:postgres@postgres:5432/vyper` | Conexão com PostgreSQL |
+| `REDIS_URL` | `redis://redis:6379/0` | Conexão com Redis |
+| `ZAP_URL` | `http://zap:8080` | Comunicação com OWASP ZAP |
+| `OLLAMA_URL` | `http://host.docker.internal:11434/api/generate` | Comunicação com Ollama |
+| `OLLAMA_MODEL` | `llama3.2:latest` | Modelo utilizado pela IA |
+| `AI_TIMEOUT` | `120` | Timeout das requisições de IA |
+| `AI_TEMPERATURE` | `0.2` | Temperatura das respostas da IA |
+
+> **Importante:** os valores `postgres`, `redis` e `zap` correspondem aos nomes dos serviços definidos no `docker-compose.yml`. Eles são resolvidos automaticamente pela rede interna do Docker Compose.
+
+> **Importante:** a porta `8080` do ZAP pode ser publicada no host como `127.0.0.1:8080:8080`, mas o Backend deve utilizar `http://zap:8080` para comunicação interna entre containers.
+
+> **Importante:** não é necessário alterar `OLLAMA_URL` para `localhost` quando o Ollama está sendo executado no host. Dentro do container, `localhost` apontaria para o próprio container.
+
+> **Nunca publique o arquivo `.env` contendo credenciais, chaves ou outras informações sensíveis. O arquivo `.env.example` deve conter somente valores de exemplo ou placeholders.**
 
 ---
 
